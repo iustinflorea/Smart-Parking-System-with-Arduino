@@ -1,0 +1,558 @@
+\documentclass[a4paper,11pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[romanian]{babel}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[a4paper, left=2cm, right=2cm, top=2cm, bottom=2cm]{geometry}
+\usepackage{xcolor} 
+\usepackage{listings}
+
+
+
+\begin{document}
+
+% Pagina de titlu 
+\begin{titlepage}
+    \centering
+    {\scshape\Large Sem. I 2024-2025 \par}
+    \vspace{6cm}
+    \flushleft
+    {\huge\bfseries Proiect PATR\par}
+    {\LARGE\bfseries Sistem de parcare cu barieră\par}
+    \vspace{2cm}
+    {\LARGE\bfseries Echipa: \par}
+    {\large Florea Iustin, Marinescu Andrei-Teodor, Ionescu Costin-Marius, Negoiță Gabriel}
+    
+    {\LARGE\bfseries Data: \today \par} 
+    \vspace{2.5cm}
+
+
+    \begin{table}[h]
+        \small
+        \centering
+        \begin{tabular}{|l|c|c|c|c|c|p{5.5cm}|}
+        \hline
+        Membrii  /  Grupa332AC       & A          & C          & D          & PR         & CB         & e-mail                    \\ \hline
+        Florea Iustin  & 40\%       & 40\%       & 40\%       & 40\%       & 100\%      & iustin.florea@stud.acs.upb.com          \\ \hline
+        Marinescu Andrei               & 14\%       & 33\%       & 27\%       & 14\%       & 100\%      & andrei.marinescu@stud.acs.upb.com          \\ \hline
+        Ionescu Costin               & 33\%       & 37\%       & 22\%       & 19\%       & 100\%      & costin.ionescu@stud.acs.upb.com          \\ \hline
+        Negoiță Gabriel               & 39\%       & 11\%       & 32\%       & 11\%       & 100\%      & gabriel.negoita@stud.acs.upb.com          \\ \hline
+        \end{tabular}
+    \end{table}
+
+    \textit{A - analiză problemă și concepere soluție, C - implementare cod, D - editare documentație, PR - ''proofreading", CB - contribuție individuală totală (\%)}\\
+    \vspace{1cm}  
+    {\large {\itshape Membrii echipei declară că lucrarea respectă toate regulile privind onestitatea academică. În caz de nerespectare a acestora, tema va fi notată cu \textbf{0 (zero) puncte}. }  \par}
+\end{titlepage}
+
+\pagenumbering{Roman} 
+
+% Cuprins
+ \setcounter{tocdepth}{2}
+ \tableofcontents
+ \clearpage
+
+% Capitole
+\setlength{\parskip}{1em} 
+\pagenumbering{arabic}			
+
+% Ireoducere
+
+\chapter{Introducere}\label{chap:intro}\markright{\thechapter~Introducere}
+
+
+\paragraph{Definirea problemei}
+
+Problema propusă pentru implementare se referă la gestionarea unei parcări de vehicule. Parcarea este dotată cu un număr de locuri de parcare și un sistem de acces pentru vehicule. În această temă, vom considera că există 4 locuri de parcare și 4 vehicule care încearcă să acceseze parcarea.
+
+\paragraph{Descrierea procesului de funcționare al parcării}
+
+Parcarea are următoarele caracteristici:
+
+\begin{itemize} \item \textbf{Locuri de parcare}: Parcarea are un număr fix de locuri de parcare. Locurile pot fi ocupate doar de vehicule care intră în parcarea disponibilă. \item \textbf{Accesul vehiculelor}: Vehiculele pot accesa parcarea doar dacă există locuri disponibile. Când un vehicul sosește și există un loc liber, acesta parchează. Dacă toate locurile sunt ocupate, vehiculul trebuie să aștepte până când un loc devine disponibil. \item \textbf{Coada de așteptare}: Dacă parcarea este plină, vehiculele vor forma o coadă de așteptare. Coadă poate conține un număr limitat de vehicule. După ce un vehicul eliberează un loc de parcare, vehiculul din fața cozii intră pe locul disponibil. \item \textbf{Durata parcării}: Fiecare vehicul poate rămâne într-un loc de parcare pentru o perioadă limitată de timp, iar dacă depășește această perioadă, se aplică o penalizare. \item \textbf{Închiderea parcării}: La sfârșitul fiecărei zile, parcarea se închide. Toate vehiculele rămase trebuie să părăsească parcarea înainte de închiderea sistemului. Dacă există vehicule care sunt încă în parcarea activă la finalul zilei, ele își vor termina parcarea înainte ca închiderea să fie finalizată. \item \textbf{Ieșirea vehiculelor}: Vehiculele pot ieși din parcare în momentul în care își eliberează locul de parcare. Procesul de ieșire va fi coordonat astfel încât să nu existe conflicte sau blocaje. \end{itemize}
+
+
+
+\chapter{Analiza problemei}\label{chap:analiza} \markright{\thechapter~Analiza problemei} 
+
+\paragraph{}
+
+\color{black} Implementarea are ca scop simularea unui sistem de parcare cu 4 locuri și 2 bariere de acces. Atunci când o mașină ajunge în fața unui senzor, bariera corespunzătoare se ridică și mașina intră în parcare. După ce mașina intră, bariera se închide, locul de parcare devine ocupat, iar ledul corespunzător locului se face roșu. De asemenea, pe display locul ocupat este înlocuit cu simbolul "-". Acest proces continuă până când parcarea este complet ocupată, iar mesajul „Parcare plină!” va apărea pe display.
+
+Atunci când o mașină părăsește parcarea, locul de parcare devine disponibil din nou. LED-ul de la locul respectiv se schimbă în verde, iar pe display locul respectiv va afișa numărul locului de parcare (de la 1 la 4). Bariera de ieșire se ridică, mașina părăsește parcarea și bariera se închide din nou.
+
+\noindent Secvențele corecte de execuție pentru a confirma rularea corespunzătoare a aplicației sunt următoarele:
+
+\begin{itemize} \item Secvența 1: \begin{itemize} \item O mașină ajunge la senzorul barierei 1 \item Bariera 1 se ridică și mașina intră în parcare \item Bariera 1 se închide \item Locul de parcare 1 devine ocupat și LED-ul se face roșu \item Display-ul arată: Locuri libere: -, 2, 3, 4 \end{itemize}
+
+\item Secvența 2: \begin{itemize} \item O a doua mașină ajunge la senzorul barierei 1 \item Bariera 1 se ridică și mașina intră în parcare \item Bariera 1 se închide \item Locul de parcare 2 devine ocupat și LED-ul se face roșu \item Display-ul arată: -, -, 3, 4 \end{itemize}
+
+\item Secvența 3: \begin{itemize} \item O a treia mașină ajunge la senzorul barierei 1 \item Bariera 1 se ridică și mașina intră în parcare \item Bariera 1 se închide \item Locul de parcare 3 devine ocupat și LED-ul se face roșu \item Display-ul arată: -, -, -, 4 \end{itemize}
+
+\item Secvența 4: \begin{itemize} \item O a patra mașină ajunge la senzorul barierei 1 \item Bariera 1 se ridică și mașina intră în parcare \item Bariera 1 se închide \item Locul de parcare 4 devine ocupat și LED-ul se face roșu \item Mesajul: „Parcare plină!” apare pe display, iar bariera 1 nu se mai ridica\end{itemize}
+
+\item Secvența 5: \begin{itemize} \item O mașină părăsește parcarea de la locul 1 \item LED-ul locului 1 devine verde \item Display-ul arată: 1, -, -, - \item Bariera 2 de ieșire se ridică \item Mașina părăsește parcarea și bariera 2 de ieșire se închide \item Locul 1 devine disponibil și este afisat pe display \end{itemize}
+
+
+\noindent Secvențele greșite de execuție, care trebuie evitate, sunt următoarele:
+
+\begin{itemize} \item Secvența 1 - nu se respectă condiția de parcare plină: \begin{itemize} \item Se încearcă parcarea unei a cincea mașini când toate locurile de parcare sunt ocupate. \item Mesajul de parcare plină nu este afișat corect pe display. \end{itemize}
+
+\item Secvența 2 - nu se respectă ordinea de ridicare a barierei pentru mașini: \begin{itemize} \item O mașină ajunge la senzorul barierei 1, iar bariera 1 se ridică corect \item Însă o altă mașină ajunge la senzorul barierei 2, dar bariera 2 nu se ridică la timp \item Locul 2 rămâne disponibil, dar ar trebui să fie ocupat \end{itemize}
+
+\item Secvența 3 - nu se respectă ordinea de eliberare a locurilor de parcare: \begin{itemize} \item O mașină părăsește parcarea, dar LED-ul nu se schimbă din roșu în verde \item Locul nu devine disponibil pe display după eliberarea acestuia \item Bariera de ieșire nu se ridică \end{itemize}
+
+\item Secvența 4 - nu se respectă intervalul de timp necesar pentru ridicarea barierei de ieșire: \begin{itemize} \item O mașină ajunge la barierea de ieșire, dar bariera se ridică prea repede \item Mașina părăsește parcarea, iar bariera se închide prea devreme \end{itemize}
+
+\item Secvența 5 - nu se actualizează corect statusul locurilor după plecarea mașinii: \begin{itemize} \item După ce o mașină pleacă și locul devine liber, locul rămâne marcat ca ocupat pe display \end{itemize} \end{itemize}
+\end{itemize}
+
+\chapter{Aplicația. Structura și soluția de implementare propusă}\label{chap:Rezultate} \markright{\thechapter~Structura și soluție implementare}
+
+%%%%%%%%%
+
+\section{Definirea structurii aplicației}\label{sec:Structura}
+
+
+\color{black} 
+
+Aplicația va fi împărțită pe mai multe task-uri corespunzătoare diferitelor entități care vor interacționa / executa anumite operații: Bariere, Senzori, Display, Leduri. În această implementare, task-urile corespund unor fire de execuție.
+
+
+\subsubsection{\color{black} Task pentru adaptarea la sloturi}
+Acest task gestionează locurile de parcare disponibile. El verifică continuu ocuparea sloturilor, actualizează starea acestora și semnalizează componentelor relevante (de exemplu, barierei de intrare sau ieșire) modificările survenite. De asemenea, se ocupă cu rezervarea și eliberarea locurilor de parcare conform cerințelor clienților. \
+
+
+\subsubsection{\color{black} Task pentru Bariera 1 (Intrare)}
+Bariera de intrare verifică periodic dacă există clienți care solicită intrarea în parcare. Când detectează un client, verifică disponibilitatea locurilor prin intermediul taskului de adaptare la sloturi. Dacă există locuri libere, se inițiază procedura de intrare, rezervând sloturile necesare și notificând clientul despre succesul operației. \
+
+\noindent
+În cazul în care parcarea este plină, task-ul notifică clientul printr-un mesaj corespunzător afișat pe LED-uri. Bariera rămâne activă până la oprirea aplicației, moment în care finalizează procedurile curente înainte de a intra în starea de pauză.
+
+\subsubsection{\color{black} Task pentru Bariera 2 (Ieșire)}
+Bariera de ieșire gestionează fluxul vehiculelor care pleacă din parcare. Când detectează un vehicul care dorește să iasă, verifică ocuparea slotului asociat prin intermediul taskului de adaptare la sloturi, eliberând locul în sistem. \
+
+\noindent
+Acest task notifică LED-urile și alte componente despre modificarea statusului parcării. După finalizarea operației de ieșire, task-ul continuă să monitorizeze fluxul de vehicule până la oprirea aplicației.
+
+\subsubsection{\color{black} Task pentru actualizarea LED-urilor}
+Task-ul pentru actualizarea LED-urilor gestionează afișarea informațiilor despre parcarea curentă. Acesta afișează numărul de locuri disponibile și mesajul "Parcare plină!" atunci când toate locurile sunt ocupate. \
+
+\noindent
+LED-urile sunt actualizate de fiecare dată când există o modificare în starea parcării, fie că este vorba despre intrarea unui nou vehicul, ieșirea unuia sau eliberarea unor locuri. 
+
+%%%%%%%%%%%%%%%
+\section{Definirea soluției în vederea implementării}\label{sec:Mecanisme}
+
+
+
+\paragraph{}
+\color{black} 
+
+Soluția a fost implementată pe o plăcuță Arduino Mega 2560, folosind \texttt{FreeRTOS.h} pentru gestionarea task-urilor și sincronizarea acestora. \\
+
+\noindent
+Pentru a putea satisface condițiile de funcționare corectă a aplicației, am ales să utilizăm următoarele mecanisme în plus față de soluția bazată pe un sistem de operare în timp real (RTOS):
+
+\begin{itemize}
+    \item 4 timere pentru gestionarea diverselor stări ale barierei și a fluxului de clienți, inclusiv gestionarea temporizării pentru intrarea și ieșirea vehiculelor din parcare.
+    \item 1 timer dedicat pentru monitorizarea și actualizarea informațiilor de la Display, care oferă feedback în timp real despre starea parcării.
+    \item Utilizarea senzorilor de proximitate pentru detectarea vehiculelor în apropierea locurilor de parcare.
+\end{itemize}
+
+\subsubsection{\color{black}}
+Pentru ca modul de funcționare a aplicației să poată fi urmărit mai ușor, am adăugat o serie de LED-uri care să acționeze drept indicatoare vizuale pentru stadiul de execuție al task-urilor corespunzătoare. Fiecare loc de parcare este dotat cu un LED RGB. \\
+
+
+\noindent
+Pentru locuri de parcare:
+\begin{itemize}
+    \item verde: locul este liber 
+    \item roșu: locul este ocupat
+
+\end{itemize}
+
+\subsection{Mecanismele de sincronizare}
+Pentru a implementa sincronizarea între taskuri, am utilizat alte mecanisme precum variabile de condiție și fluxuri de execuție bine coordonate. Barierele sunt sincronizate cu senzorii și clienții printr-o logică de control ce asigură accesul exclusiv al unui client la un loc de parcare într-un moment dat. Actualizarea informațiilor despre starea parcării în Display și gestionarea comenzilor clienților sunt coordonate printr-o secvențiere strictă a operațiilor, evitând conflictele prin proiectarea logicii aplicației.
+
+\subsection{Plăcuța Arduino}
+Aplicația este construită pe plăcuța Arduino Mega 2560, care permite integrarea unui număr mare de componente hardware. În proiect sunt folosiți senzorii IR pentru a detecta vehiculele care se apropie de locurile de parcare, iar barierele sunt controlate de servomotoare pentru a ridica sau coborî barierele în funcție de semnalele primite de la clienți și senzori. Plăcuța Arduino permite și conectarea la Display pentru a oferi feedback vizual utilizatorilor.
+
+\subsection{Schema circuitului}
+Circuitul folosește mai multe componente:
+\begin{itemize}
+    \item Arduino Mega 2560 ca unitate centrală de control
+    \item 6xSenzori IR pentru detectarea vehiculelor
+    \item 2xServomotoare pentru controlul barierei
+    \item 4xLED-uri RGB pentru indicarea stării fiecărui client și barieră
+    \item Display pentru a afișa statusul parcării
+\end{itemize}
+
+
+
+%%%%%%%%%%%%%%%%
+\section{Implementarea soluției}
+\label{sec:implementare}
+
+\color{black} În această secțiune se va prezenta codul aplicației. Fie se vor insera comentarii în cod, fie se vor discuta fragmente mai mari pentru a explica modul de lucru.
+
+\paragraph{Exemplu}
+\color{black} 
+
+\noindent
+\small
+\lstset{ % Setările pentru redarea codului
+  language=C++,
+  basicstyle=\ttfamily\small, % Folosește un font mic
+  numbers=left, 
+  numberstyle=\tiny, 
+  stepnumber=1, 
+  numbersep=5pt, 
+  backgroundcolor=\color{lightgray}, % Fundal gri pentru cod
+  showspaces=false, 
+  showstringspaces=false, 
+  showtabs=false, 
+  frame=single, 
+  rulecolor=\color{black}, 
+  tabsize=2, 
+  breaklines=true, % Activează împărțirea automată a liniilor
+  breakatwhitespace=true,
+  captionpos=b
+}
+\begin{lstlisting}[language=C]
+#include <LiquidCrystal_I2C.h>  // Biblioteca pentru ecranul LCD cu I2C
+#include <Servo.h>               // Biblioteca pentru controlul servomotoarelor
+#include <Arduino_FreeRTOS.h>    // Biblioteca pentru utilizarea FreeRTOS (multithreading)
+#include <semphr.h>              // Biblioteca pentru semafoare (folosită pentru sincronizare)
+
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);  // Inițializarea obiectului LCD cu adresa 0x27, 16 coloane și 2 linii
+Servo inComingServo;                 // Obiect pentru controlul servomotorului barieră de intrare
+Servo outGoingServo;                 // Obiect pentru controlul servomotorului barieră de ieșire
+
+const int servo1 = 51;               // Pinul pentru servomotorul de intrare
+const int servo2 = 53;               // Pinul pentru servomotorul de ieșire
+
+// Variabilele pentru starea barierelor
+bool inComingBarrierClose = false;   // Stare barieră intrare (închisă sau deschisă)
+bool outGoingBarrierClose = false;   // Stare barieră ieșire (închisă sau deschisă)
+String slotsAvailability[4] = {"1", "2", "3", "4"};  // Sloturile de parcare disponibile (1 - disponibil, - - ocupat)
+
+// Senzorii pentru sloturi și bariere
+const int inComingSensor = 49;       // Senzorul pentru detectarea vehiculului la intrare
+const int outGoingSensor = 47;       // Senzorul pentru detectarea vehiculului la ieșire
+
+// Definirea pinilor RGB pentru fiecare slot de parcare
+// Slot 1
+const int r1 = 22;
+const int g1 = 24;
+const int b1 = 26;
+const int sensor1 = 42;
+
+// Slot 2
+const int r2 = 28;
+const int g2 = 30;
+const int b2 = 32;
+const int sensor2 = 44;
+
+// Slot 3
+const int r3 = 39;
+const int g3 = 36;
+const int b3 = 38;
+const int sensor3 = 46;
+
+// Slot 4
+const int r4 = 40;
+const int g4 = 35;
+const int b4 = 37;
+const int sensor4 = 48;
+
+// Semafore pentru sincronizarea accesului la resurse partajate
+SemaphoreHandle_t servoSemaphore;
+SemaphoreHandle_t ledSemaphore;
+SemaphoreHandle_t displaySemaphore;
+
+void setup() {
+  lcd.init();           // Inițializează LCD-ul
+  lcd.backlight();      // Activează iluminarea de fundal a LCD-ului
+  Serial.begin(9600);   // Deschide comunicarea serială la 9600 bps
+
+  // Atașează servomotoarele la pini
+  inComingServo.attach(servo1);
+  outGoingServo.attach(servo2);
+
+ // Setează pinurile pentru senzori și LED-uri ca input/output
+  pinMode(sensor1, INPUT);
+  pinMode(sensor2, INPUT);
+  pinMode(sensor3, INPUT);
+  pinMode(sensor4, INPUT);
+  pinMode(inComingSensor, INPUT);
+  pinMode(outGoingSensor, INPUT);
+
+  pinMode(r1, OUTPUT);
+  pinMode(g1, OUTPUT);
+  pinMode(b1, OUTPUT);
+
+  pinMode(r2, OUTPUT);
+  pinMode(g2, OUTPUT);
+  pinMode(b2, OUTPUT);
+
+  pinMode(r3, OUTPUT);
+  pinMode(g3, OUTPUT);
+  pinMode(b3, OUTPUT);
+
+  pinMode(r4, OUTPUT);
+  pinMode(g4, OUTPUT);
+  pinMode(b4, OUTPUT);
+
+  // Crearea semafoarelor
+  servoSemaphore = xSemaphoreCreateBinary();
+  ledSemaphore = xSemaphoreCreateBinary();
+  displaySemaphore = xSemaphoreCreateBinary();
+
+  // Inițializare semafoare
+  xSemaphoreGive(servoSemaphore);
+  xSemaphoreGive(ledSemaphore);
+  xSemaphoreGive(displaySemaphore);
+}
+
+void loop() {
+  // Sarcini concurrente pentru actualizarea sloturilor, barierei de intrare/ieșire și LED-urilor
+  taskUpdateSlots();
+  taskManageIncomingBarrier();
+  taskManageOutgoingBarrier();
+  taskUpdateLEDs();
+}
+
+// Actualizează starea sloturilor de parcare și afișează pe LCD
+void taskUpdateSlots() {
+  if (xSemaphoreTake(displaySemaphore, portMAX_DELAY)) {
+    static unsigned long lastDisplayUpdate = 0;
+    const unsigned long displayInterval = 500;
+
+    // Verifică intervalul de actualizare al LCD-ului
+    if (millis() - lastDisplayUpdate >= displayInterval) {
+      lastDisplayUpdate = millis();
+
+      // Citește statusul senzorilor pentru fiecare slot
+      int slotSensorStatus_1 = digitalRead(sensor1);
+      int slotSensorStatus_2 = digitalRead(sensor2);
+      int slotSensorStatus_3 = digitalRead(sensor3);
+      int slotSensorStatus_4 = digitalRead(sensor4);
+
+      // Actualizează disponibilitatea sloturilor
+      slotsAvailability[0] = (slotSensorStatus_1 == 1) ? "1" : "-";
+      slotsAvailability[1] = (slotSensorStatus_2 == 1) ? "2" : "-";
+      slotsAvailability[2] = (slotSensorStatus_3 == 1) ? "3" : "-";
+      slotsAvailability[3] = (slotSensorStatus_4 == 1) ? "4" : "-";
+
+      lcd.clear();// Curăță LCD-ul
+      if (slotsAvailability[0] != "-" || slotsAvailability[1] != "-" || slotsAvailability[2] != "-" || slotsAvailability[3] != "-") {
+        lcd.setCursor(2, 0); // Setează cursorul la prima linie, a doua coloană
+        lcd.print("Locuri libere");
+        lcd.setCursor(0, 1); // Setează cursorul pe a doua linie
+        lcd.print(slotsAvailability[0] + ", " + slotsAvailability[1] + ", " + slotsAvailability[2] + ", " + slotsAvailability[3]);
+      } else {
+        lcd.setCursor(2, 0);
+        lcd.print("Parcare plina!");
+      }
+    }
+    xSemaphoreGive(displaySemaphore); // Eliberează semaforul pentru alte taskuri
+  }
+}
+
+// Gestionează bariera de intrare
+void taskManageIncomingBarrier() {
+  if (xSemaphoreTake(servoSemaphore, portMAX_DELAY)) {
+    static unsigned long lastServoMove = 0;
+    const unsigned long servoInterval = 20;
+
+    int inComingSensorStatus = digitalRead(inComingSensor);  // Citește statusul senzorului de intrare
+
+    // Verifică dacă parcarea este plină
+    bool parkingFull = true;
+    for (int i = 0; i < 4; i++) {
+      if (slotsAvailability[i] != "-") {
+        parkingFull = false; // Dacă există cel puțin un loc liber
+        break;
+      }
+    }
+
+    if (parkingFull) {
+      // Dacă parcarea este plină, afișează mesajul și ține bariera închisă
+      lcd.clear();
+      lcd.setCursor(2, 0);
+      lcd.print("Parcare plina! ");
+      xSemaphoreGive(servoSemaphore);
+      return; // Ieșire din funcție fără a acționa bariera
+    }
+
+    // Dacă parcarea nu este plină, acționăm bariera
+    if (inComingSensorStatus == 1) { // Senzorul detectează un vehicul
+      if (millis() - lastServoMove >= servoInterval) {
+        lastServoMove = millis();
+        inComingServo.write(max(inComingServo.read() - 1, 0)); // Coboară bariera
+        if (inComingServo.read() == 0) {
+          inComingBarrierClose = false; // Bariera este complet coborâtă
+        }
+      }
+    } else { // Senzorul nu mai detectează vehicul
+      if (millis() - lastServoMove >= servoInterval) {
+        lastServoMove = millis();
+        inComingServo.write(min(inComingServo.read() + 1, 90)); // Ridică bariera
+        if (inComingServo.read() == 90) {
+          inComingBarrierClose = true; // Bariera este complet ridicată
+        }
+      }
+    }
+
+    xSemaphoreGive(servoSemaphore); // Eliberează semaforul
+  }
+}
+
+// Gestionează bariera de ieșire
+void taskManageOutgoingBarrier() {
+  if (xSemaphoreTake(servoSemaphore, portMAX_DELAY)) {
+    static unsigned long lastServoMove = 0;
+    const unsigned long servoInterval = 20;
+
+    int outGoingSensorStatus = digitalRead(outGoingSensor); // Citește statusul senzorului de ieșire
+
+    if (outGoingSensorStatus == 1) { // Senzorul detectează un vehicul
+      if (millis() - lastServoMove >= servoInterval) {
+        lastServoMove = millis();
+        outGoingServo.write(max(outGoingServo.read() - 1, 0)); // Coboară bariera
+        if (outGoingServo.read() == 0) {
+          outGoingBarrierClose = false; // Bariera este complet coborâtă
+        }
+      }
+    } else { // Senzorul nu mai detectează vehicul
+      if (millis() - lastServoMove >= servoInterval) {
+        lastServoMove = millis();
+        outGoingServo.write(min(outGoingServo.read() + 1, 90)); // Ridică bariera
+        if (outGoingServo.read() == 90) {
+          outGoingBarrierClose = true; // Bariera este complet ridicată
+        }
+      }
+    }
+
+    xSemaphoreGive(servoSemaphore); // Eliberează semaforul
+  }
+}
+
+
+// Actualizează LED-urile pentru sloturi pe baza disponibilității
+void taskUpdateLEDs() {
+  if (xSemaphoreTake(ledSemaphore, portMAX_DELAY)) {
+    static unsigned long lastLEDUpdate = 0;
+    const unsigned long ledInterval = 100;
+
+    if (millis() - lastLEDUpdate >= ledInterval) {
+      lastLEDUpdate = millis();
+
+      // Verifică disponibilitatea fiecărui slot și setează culoarea corespunzătoare a LED-urilor
+      if (slotsAvailability[0] == "-") {
+        color(255, 0, 0, 1);  // Slotul 1 ocupat (roșu)
+      } else {
+        color(0, 255, 0, 1);  // Slotul 1 liber (verde)
+      }
+
+      if (slotsAvailability[1] == "-") {
+        color(255, 0, 0, 2);  // Slotul 2 ocupat (roșu)
+      } else {
+        color(0, 255, 0, 2);  // Slotul 2 liber (verde)
+      }
+
+      if (slotsAvailability[2] == "-") {
+        color(255, 0, 0, 3);  // Slotul 3 ocupat (roșu)
+      } else {
+        color(0, 255, 0, 3);  // Slotul 3 liber (verde)
+      }
+
+      if (slotsAvailability[3] == "-") {
+        color(255, 0, 0, 4);  // Slotul 4 ocupat (roșu)
+      } else {
+        color(0, 255, 0, 4);  // Slotul 4 liber (verde)
+      }
+    }
+    xSemaphoreGive(ledSemaphore);  // Eliberează semaforul
+  }
+}
+
+// Setează culoarea LED-urilor RGB pentru fiecare slot
+void color(unsigned char red, unsigned char green, unsigned char blue, int light) {
+  if (light == 1) {
+    analogWrite(r1, red);
+    analogWrite(b1, blue);
+    analogWrite(g1, green);
+  } else if (light == 2) {
+    analogWrite(r2, red);
+    analogWrite(b2, blue);
+    analogWrite(g2, green);
+  } else if (light == 3) {
+    analogWrite(r3, red);
+    analogWrite(b3, blue);
+    analogWrite(g3, green);
+  } else if (light == 4) {
+    analogWrite(r4, red);
+    analogWrite(b4, blue);
+    analogWrite(g4, green);
+  }
+}
+
+
+
+\end{lstlisting}
+\normalsize
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Testarea aplicației și validarea soluției propuse} \label{sec:testare} \markright{\thechapter~Testare și validare}
+
+
+\paragraph{}
+
+Aplicația a fost testată pe parcursul întregului proces de dezvoltare, începând cu testele unitare pentru fiecare funcționalitate de bază și până la testarea întregului sistem integrat. Astfel, fiecare task a fost testat independent pentru a verifica corectitudinea funcționării lor în scenarii izolate. După finalizarea testării fiecărui task în parte, aplicația a fost testată în ansamblu pentru a verifica interacțiunile între componente.
+
+În cadrul testării s-au utilizat mai multe secvențe de intrare, astfel încât să se simuleze diferite scenarii de parcare, inclusiv clienți care ajung într-un moment de vârf, unii care așteaptă să găsească un loc de parcare liber.
+
+\paragraph{Validarea soluției}
+
+Validarea aplicației a fost realizată prin rularea unor secvențe de intrare care reflectă diverse situații ce pot apărea într-o parcare reală. Printre aceste secvențe se numără:
+
+Clienți care ajung simultan și caută locuri de parcare disponibile, iar unii dintre ei sunt plasați în așteptare dacă nu există locuri libere.
+
+
+\paragraph{Rezultatele testării}
+
+În urma testării, s-a constatat că aplicația respectă funcționalitățile dorite și că mecanismele de sincronizare sunt eficiente, gestionând corect clienții care așteaptă să se elibereze locuri de parcare și alocarea locurilor disponibile. De asemenea, interacțiunea dintre task-uri nu prezintă blocaje sau erori de sincronizare.
+
+\paragraph{Observații și concluzii}
+
+În urma observațiilor făcute pe baza testelor, aplicația a fost ajustată pentru a îmbunătăți gestionarea locurilor de parcare și pentru a asigura că toți clienții sunt serviți corespunzător. În stadiul actual, aplicația răspunde eficient și corect la toate tipurile de intrare, iar sincronizarea între componentele aplicației a fost optimizată pentru a minimiza orice tip de blocaj.
+
+
+\chapter{Bibliografie}
+
+\begin{itemize}
+    \item \textbf{Arduino}, \textit{Arduino Documentation}. \url{https://www.arduino.cc/en/Guide/Introduction}.
+    
+    \item \textbf{FreeRTOS}, \textit{FreeRTOS - Real-Time Operating System}. \url{https://www.freertos.org/}.
+    
+    \item \textbf{SparkFun Electronics}, \textit{Guide to Servo Motors}.\url{https://learn.sparkfun.com/tutorials/servo-motors/all}.
+    
+    \item \textbf{Adafruit}, \textit{Adafruit RGB LEDs Guide}. \url{https://learn.adafruit.com/adafruit-neopixel-uberguide}.
+    
+    \item \textbf{Instructables}, \textit{Smart Parking System using Arduino}.\url{https://www.instructables.com/Smart-Parking-System-Using-Arduino/}.
+    
+    \item \textbf{Random Nerd Tutorials}, \textit{Guide for Ultrasonic Sensor HC-SR04 with Arduino}. \url{https://randomnerdtutorials.com/complete-guide-for-ultrasonic-sensor-hc-sr04/}.
+    
+    \item \textbf{Electronics Hub}, \textit{Automatic Car Parking System using Arduino}. \url{https://www.electronicshub.org/automatic-car-parking-system/}.
+    
+    \item \textbf{Robocraze}, \textit{How to Interface LCD with Arduino}. \url{https://robocraze.com/blogs/post/how-to-interface-lcd-with-arduino}.
+\end{itemize}
+
+
+
+
+ \end{document}
